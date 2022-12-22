@@ -9,6 +9,7 @@ import com.example.lab9_1.Constants.API_LANG
 import com.example.lab9_1.Constants.API_UNITS
 import com.example.lab9_1.Constants.STATE_WEATHER
 import com.example.lab9_1.Constants.TIMBER_TAG
+import com.example.lab9_1.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,12 +22,13 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
     private val weatherAdapter = WeatherAdapter()
     private var weatherList = listOf<WeatherNW.DataWeather>()
-    private lateinit var binding: MainActivity
+    private lateinit var binding: ActivityMainBinding
     private var weatherAPI = WeatherAPI.createAPI()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         recycleViewInit()
 
