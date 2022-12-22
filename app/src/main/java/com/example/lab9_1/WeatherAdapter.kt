@@ -43,6 +43,14 @@ class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder
             else -> throw IllegalArgumentException("Invalid temperature")
         }
     }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (getItem(position).main.temp > -15) {
+            TYPE_WARM
+        } else {
+            TYPE_COLD
+        }
+    }
 }
 
 private fun getImage(weather: WeatherNW.DataWeather) =

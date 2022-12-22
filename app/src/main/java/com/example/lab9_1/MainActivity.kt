@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         recycleViewInit()
+        //ресурсы не эффективно используются, пару переворотов и зависает
 
         if (savedInstanceState == null) {
             loadWeather()
