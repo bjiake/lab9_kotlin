@@ -33,11 +33,12 @@ class MainActivity : AppCompatActivity() {
         recycleViewInit()
         //ресурсы не эффективно используются, пару переворотов и зависает
 
-        if (savedInstanceState == null) {
+        if (weatherList.isEmpty()) {
             loadWeather()
             Timber.tag(TIMBER_TAG).d("Залез в сеть.")
         } else {
-            Timber.tag(TIMBER_TAG).d("Ничего не сделал")
+            weatherAdapter.submitList(weatherList)
+            Timber.tag(TIMBER_TAG).d("Восстановил из WeatherStore")
         }
     }
     override fun onSaveInstanceState(outState: Bundle) {
