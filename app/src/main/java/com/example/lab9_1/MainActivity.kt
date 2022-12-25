@@ -41,22 +41,22 @@ class MainActivity : AppCompatActivity() {
             Timber.tag(TIMBER_TAG).d("Восстановил из WeatherStore")
         }
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        val jsonWeather = Gson().toJson(weatherList)
-        outState.putString(STATE_WEATHER, jsonWeather)
-        Timber.tag(TIMBER_TAG).d("Сохранил")
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        val type = object : TypeToken<List<WeatherNW.DataWeather>>() {}.type
-        weatherList = Gson().fromJson(savedInstanceState.getString(STATE_WEATHER), type)
-        Timber.tag(TIMBER_TAG).d("Восстановил")
-        weatherAdapter.submitList(weatherList)
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        val jsonWeather = Gson().toJson(weatherList)
+//        outState.putString(STATE_WEATHER, jsonWeather)
+//        Timber.tag(TIMBER_TAG).d("Сохранил")
+//    }
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//
+//        val type = object : TypeToken<List<WeatherNW.DataWeather>>() {}.type
+//        weatherList = Gson().fromJson(savedInstanceState.getString(STATE_WEATHER), type)
+//        Timber.tag(TIMBER_TAG).d("Восстановил")
+//        weatherAdapter.submitList(weatherList)
+//    }
 
     private fun recycleViewInit() {
         binding.rvWeather.adapter = weatherAdapter
