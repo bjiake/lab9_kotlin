@@ -1,6 +1,7 @@
 package com.example.lab9_1
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lab9_1.Constants.API_CITY
@@ -21,7 +22,7 @@ import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     private val weatherAdapter = WeatherAdapter()
-    private var weatherList = listOf<WeatherNW.DataWeather>()
+    //private var weatherList = listOf<WeatherNW.DataWeather>()
     private lateinit var binding: ActivityMainBinding
     private var weatherAPI = WeatherAPI.createAPI()
 
@@ -29,16 +30,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Timber.plant(Timber.DebugTree())
 
         recycleViewInit()
         //ресурсы не эффективно используются, пару переворотов и зависает
 
-        if (weatherList.isEmpty()) {
+        if (WeatherObject.weatherList.isEmpty()) {
             loadWeather()
-            Timber.tag(TIMBER_TAG).d("Залез в сеть.")
+            Log.d("TAGGG", "Залез в сеть")
+            //Timber.tag(TIMBER_TAG).d("Залез в сеть.")
         } else {
-            weatherAdapter.submitList(weatherList)
-            Timber.tag(TIMBER_TAG).d("Восстановил из WeatherStore")
+            weatherAdapter.submitList(WeatherObject.weatherList)
+            Log.d( "TAGGG","Восстановил из WeatherStore")
         }
     }
 //    override fun onSaveInstanceState(outState: Bundle) {
@@ -72,8 +75,9 @@ class MainActivity : AppCompatActivity() {
             .enqueue(object : Callback<WeatherNW> {
                 override fun onResponse(call: Call<WeatherNW>, response: Response<WeatherNW>) {
                     if (response.isSuccessful) {
-                        weatherList = response.body()?.list!!
-                        weatherAdapter.submitList(weatherList)
+                        WeatherObject.weatherList = response.body()?.list!!
+
+                        weatherAdapter.submitList(WeatherObject.weatherList)
                     }
                 }
                 override fun onFailure(call: Call<WeatherNW>, trowable: Throwable) {
