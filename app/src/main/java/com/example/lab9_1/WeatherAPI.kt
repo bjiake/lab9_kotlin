@@ -16,8 +16,13 @@ interface WeatherAPI {
             val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(createClient())
                 .build()
             return retrofitBuilder.create(WeatherAPI::class.java)
+        }
+        private fun createClient(): OkHttpClient{
+            val client = OkHttpClient.Builder().addInterceptor(LoggingInterceptor()).build()
+            return client
         }
     }
 
