@@ -1,6 +1,5 @@
 package com.example.lab9_1
 
-import com.example.lab9_1.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -18,11 +17,18 @@ interface WeatherAPI {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(createClient())
                 .build()
+
             return retrofitBuilder.create(WeatherAPI::class.java)
         }
-        private fun createClient(): OkHttpClient{
-            val client = OkHttpClient.Builder().addInterceptor(LoggingInterceptor()).build()
-            return client
+
+        private fun createClient(): OkHttpClient {
+            val libLoggingInterceptor = HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)
+            val myLoggingInterceptor = LoggingInterceptor()
+            return OkHttpClient.Builder()
+                .addInterceptor(libLoggingInterceptor)
+                .addInterceptor(myLoggingInterceptor)
+                .build()
         }
     }
 

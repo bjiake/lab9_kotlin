@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         Timber.plant(Timber.DebugTree())
 
         recycleViewInit()
-        //ресурсы не эффективно используются, пару переворотов и зависает
 
         if (WeatherObject.weatherList.isEmpty()) {
             loadWeather()
@@ -76,7 +75,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<WeatherNW>, response: Response<WeatherNW>) {
                     if (response.isSuccessful) {
                         WeatherObject.weatherList = response.body()?.list!!
-
                         weatherAdapter.submitList(WeatherObject.weatherList)
                     }
                 }
