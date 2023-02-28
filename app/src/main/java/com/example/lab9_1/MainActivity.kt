@@ -21,26 +21,36 @@ import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var fragment: WeatherFragment
     private val weatherAdapter = WeatherAdapter()
+
     //private var weatherList = listOf<WeatherNW.DataWeather>()
     private lateinit var binding: ActivityMainBinding
     private var weatherAPI = WeatherAPI.createAPI()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fragment =
+            supportFragmentManager.findFragmentByTag(WeatherFragment.TAG) as WeatherFragment?
+            ?: WeatherFragment().apply {
+                supportFragmentManager
+                    .beginTransaction()
+                    .add(this, WeatherFragment.TAG)
+                    .commit()
+            }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.plant(Timber.DebugTree())
 
         recycleViewInit()
 
-        if (WeatherObject.weatherList.isEmpty()) {
+        if (fragment.weatherList.isEmpty()) {
             loadWeather()
             Log.d("TAGGG", "Залез в сеть")
             //Timber.tag(TIMBER_TAG).d("Залез в сеть.")
         } else {
-            weatherAdapter.submitList(WeatherObject.weatherList)
-            Log.d( "TAGGG","Восстановил из WeatherStore")
+            weatherAdapter.submitList(fragment.weatherList)
+            Log.d("TAGGG", "Восстановил из WeatherStore")
         }
     }
 //    override fun onSaveInstanceState(outState: Bundle) {
@@ -74,10 +84,11 @@ class MainActivity : AppCompatActivity() {
             .enqueue(object : Callback<WeatherNW> {
                 override fun onResponse(call: Call<WeatherNW>, response: Response<WeatherNW>) {
                     if (response.isSuccessful) {
-                        WeatherObject.weatherList = response.body()?.list!!
-                        weatherAdapter.submitList(WeatherObject.weatherList)
+                        fragment.weatherList = response.body()?.list!!
+                        weatherAdapter.submitList(fragment.weatherList)
                     }
                 }
+
                 override fun onFailure(call: Call<WeatherNW>, trowable: Throwable) {
                     Timber.tag(TIMBER_TAG).e(trowable)
                 }
