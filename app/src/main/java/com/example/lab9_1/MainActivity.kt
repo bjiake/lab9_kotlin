@@ -3,16 +3,14 @@ package com.example.lab9_1
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lab9_1.Constants.API_CITY
 import com.example.lab9_1.Constants.API_KEY
 import com.example.lab9_1.Constants.API_LANG
 import com.example.lab9_1.Constants.API_UNITS
-import com.example.lab9_1.Constants.STATE_WEATHER
 import com.example.lab9_1.Constants.TIMBER_TAG
 import com.example.lab9_1.databinding.ActivityMainBinding
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     //private var weatherList = listOf<WeatherNW.DataWeather>()
     private lateinit var binding: ActivityMainBinding
     private var weatherAPI = WeatherAPI.createAPI()
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         recycleViewInit()
         //ресурсы не эффективно используются, пару переворотов и зависает
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         if (WeatherObject.weatherList.isEmpty()) {
             loadWeather()
