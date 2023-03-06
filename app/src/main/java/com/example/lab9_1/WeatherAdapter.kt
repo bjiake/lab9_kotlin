@@ -19,6 +19,7 @@ private const val TYPE_COLD = 0
 private const val TYPE_WARM = 1
 
 class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
+    var weatherList = mutableListOf<WeatherNW.DataWeather>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -34,6 +35,10 @@ class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder
                 throw IllegalArgumentException("Missing type of holder")
             }
         }
+    }
+    fun setWeather(weatherList: List<WeatherNW.DataWeather>){
+        this.weatherList = weatherList.toMutableList()
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
