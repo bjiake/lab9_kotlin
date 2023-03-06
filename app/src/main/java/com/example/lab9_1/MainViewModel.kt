@@ -8,7 +8,7 @@ import retrofit2.Response
 import timber.log.Timber
 
 class MainViewModel: ViewModel() {
-    lateinit var weatherList: MutableList<WeatherNW.DataWeather>
+    var weatherList = mutableListOf<WeatherNW.DataWeather>()
     private var weatherAPI = WeatherAPI.createAPI()
     init {
         Log.e("aaa","Init")
@@ -38,7 +38,7 @@ class MainViewModel: ViewModel() {
             .enqueue(object : Callback<WeatherNW> {
                 override fun onResponse(call: Call<WeatherNW>, response: Response<WeatherNW>) {
                     if (response.isSuccessful) {
-                        weatherList = (response.body()?.list as MutableList<WeatherNW.DataWeather>?)!!
+                        weatherList = response.body()?.list?.toMutableList()!!
                         Log.e("aaa","loadWeather: $weatherList")
                     }
                 }

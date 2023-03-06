@@ -33,35 +33,18 @@ class MainActivity : AppCompatActivity() {
 
         recycleViewInit()
         //ресурсы не эффективно используются, пару переворотов и зависает
-
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        weatherAdapter.submitList(viewModel.weatherList)
 
-        if (WeatherObject.weatherList.isEmpty()) {
-            loadWeather()
-            Log.d("TAGGG", "Залез в сеть")
-            //Timber.tag(TIMBER_TAG).d("Залез в сеть.")
-        } else {
-            weatherAdapter.submitList(WeatherObject.weatherList)
-            Log.d( "TAGGG","Восстановил из WeatherStore")
-        }
+//        if (WeatherObject.weatherList.isEmpty()) {
+//            //loadWeather()
+//            Log.d("TAGGG", "Залез в сеть")
+//            //Timber.tag(TIMBER_TAG).d("Залез в сеть.")
+//        } else {
+//            weatherAdapter.submitList(WeatherObject.weatherList)
+//            Log.d( "TAGGG","Восстановил из WeatherStore")
+//        }
     }
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//
-//        val jsonWeather = Gson().toJson(weatherList)
-//        outState.putString(STATE_WEATHER, jsonWeather)
-//        Timber.tag(TIMBER_TAG).d("Сохранил")
-//    }
-//
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//
-//        val type = object : TypeToken<List<WeatherNW.DataWeather>>() {}.type
-//        weatherList = Gson().fromJson(savedInstanceState.getString(STATE_WEATHER), type)
-//        Timber.tag(TIMBER_TAG).d("Восстановил")
-//        weatherAdapter.submitList(weatherList)
-//    }
-
     private fun recycleViewInit() {
         binding.rvWeather.adapter = weatherAdapter
         binding.rvWeather.layoutManager = LinearLayoutManager(
@@ -70,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             false
         )
     }
-
     private fun loadWeather() {
         weatherAPI.getForecast(API_CITY, API_KEY, API_UNITS, API_LANG)
             .enqueue(object : Callback<WeatherNW> {
@@ -87,3 +69,19 @@ class MainActivity : AppCompatActivity() {
             })
     }
 }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        val jsonWeather = Gson().toJson(weatherList)
+//        outState.putString(STATE_WEATHER, jsonWeather)
+//        Timber.tag(TIMBER_TAG).d("Сохранил")
+//    }
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//
+//        val type = object : TypeToken<List<WeatherNW.DataWeather>>() {}.type
+//        weatherList = Gson().fromJson(savedInstanceState.getString(STATE_WEATHER), type)
+//        Timber.tag(TIMBER_TAG).d("Восстановил")
+//        weatherAdapter.submitList(weatherList)
+//    }
