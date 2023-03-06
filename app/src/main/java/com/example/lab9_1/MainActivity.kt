@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+            //gut
 //        fragment =
 //            supportFragmentManager.findFragmentByTag(WeatherFragment.TAG) as WeatherFragment?
 //            ?: WeatherFragment().apply {
