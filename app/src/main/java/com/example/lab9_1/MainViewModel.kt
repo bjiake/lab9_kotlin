@@ -7,28 +7,20 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     var weatherList = mutableListOf<WeatherNW.DataWeather>()
     private var weatherAPI = WeatherAPI.createAPI()
-    init {
-        Log.e("aaa","Init")
-        getData(weatherList) { loadWeather() }
-    }
 
-    override fun onCleared() {
-        Log.e("aaa","Cleared")
-        super.onCleared()
-    }
-
-    private fun getData(weatherList: MutableList<WeatherNW.DataWeather>, callback: () -> Unit): MutableList<WeatherNW.DataWeather>{
-        Log.e("aaa","getData")
-        if(weatherList.isEmpty()){
-            callback()
+    fun getData(callback: (List<WeatherNW.DataWeather>) -> Unit) {
+        if (weatherList.isEmpty()) {
+            Log.d("оTAG", "Пошли грузить погоду")
+            loadWeather(callback)
+        } else {
+            callback(weatherList)
         }
-        Log.e("aaa","return else: $weatherList")
-        return weatherList
     }
-    private fun loadWeather() {
+
+    private fun loadWeather(callback: (List<WeatherNW.DataWeather>) -> Unit) {
         weatherAPI.getForecast(
             Constants.API_CITY,
             Constants.API_KEY,
@@ -39,9 +31,10 @@ class MainViewModel: ViewModel() {
                 override fun onResponse(call: Call<WeatherNW>, response: Response<WeatherNW>) {
                     if (response.isSuccessful) {
                         weatherList = response.body()?.list?.toMutableList()!!
-                        Log.e("aaa","loadWeather: $weatherList")
+                        callback(weatherList)
                     }
                 }
+
                 override fun onFailure(call: Call<WeatherNW>, trowable: Throwable) {
                     Timber.tag(Constants.TIMBER_TAG).e(trowable)
                 }
