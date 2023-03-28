@@ -34,6 +34,7 @@ class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder
                 throw IllegalArgumentException("Missing type of holder")
             }
         }
+        //
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
