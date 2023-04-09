@@ -8,17 +8,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.lab9_1.R
-import com.example.lab9_1.WeatherNW
-import com.example.lab9_1.databinding.ItemWeatherWarmHolderBinding
-import com.example.lab9_1.databinding.ItemWeatherColdHolderBinding
-import kotlinx.android.synthetic.main.item_weather_cold_holder.view.*
+import com.example.lab9_1.data.network.WeatherNW
+import com.example.lab9_1.domain.Weather
 import java.lang.IllegalArgumentException
 //Todo
 private const val TYPE_COLD = 0
 private const val TYPE_WARM = 1
 
-class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
+class WeatherAdapter: ListAdapter<Weather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -46,7 +43,7 @@ class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).main.temp > -15) {
+        return if (getItem(position).temperature > -15) {
             TYPE_WARM
         } else {
             TYPE_COLD
@@ -54,18 +51,18 @@ class WeatherAdapter: ListAdapter<WeatherNW.DataWeather, RecyclerView.ViewHolder
     }
 }
 
-private fun getImage(weather: WeatherNW.DataWeather) =
-    "https://openweathermap.org/img/wn/${weather.weather.first().icon}@2x.png"
+private fun getImage(weather: Weather) =
+    "https://openweathermap.org/img/wn/${weather.iconURL}@2x.png"
 
 class WeatherColdHolder(private val view: View) :
     RecyclerView.ViewHolder(view.rootView) {
-    fun bind(weather: WeatherNW.DataWeather) {
+    fun bind(weather: Weather) {
         val weatherTimeDate = weather.dtTxt.split(" ")
         view.findViewById<TextView>(R.id.tvTemperature).text =
-            view.rootView.context.getString(R.string.temperature, weather.main.temp.toString())
+            view.rootView.context.getString(R.string.temperature, weather.temperature.toString())
         view.findViewById<TextView>(R.id.tvTime).text = weatherTimeDate.first()
         view.findViewById<TextView>(R.id.tvDate).text = weatherTimeDate.last()
-        view.findViewById<TextView>(R.id.tvPressure).text = weather.main.pressure.toString()
+        view.findViewById<TextView>(R.id.tvPressure).text = weather.pressure.toString()
         Glide
             .with(view.rootView)
             .load(getImage(weather))
@@ -75,13 +72,13 @@ class WeatherColdHolder(private val view: View) :
 
 class WeatherWarmHolder(private val view: View) :
     RecyclerView.ViewHolder(view.rootView) {
-    fun bind(weather: WeatherNW.DataWeather) {
+    fun bind(weather: Weather) {
         val weatherTimeDate = weather.dtTxt.split(" ")
         view.findViewById<TextView>(R.id.tvTemperature).text =
-            view.rootView.context.getString(R.string.temperature, weather.main.temp.toString())
+            view.rootView.context.getString(R.string.temperature, weather.temperature.toString())
         view.findViewById<TextView>(R.id.tvTime).text = weatherTimeDate.first()
         view.findViewById<TextView>(R.id.tvDate).text = weatherTimeDate.last()
-        view.findViewById<TextView>(R.id.tvPressure).text = weather.main.pressure.toString()
+        view.findViewById<TextView>(R.id.tvPressure).text = weather.pressure.toString()
         Glide
             .with(view.rootView)
             .load(getImage(weather))
@@ -89,14 +86,14 @@ class WeatherWarmHolder(private val view: View) :
     }
 }
 
-class WeatherDiffCallback : DiffUtil.ItemCallback<WeatherNW.DataWeather>() {
+class WeatherDiffCallback : DiffUtil.ItemCallback<Weather>() {
     override fun areItemsTheSame(
-        oldItem: WeatherNW.DataWeather,
-        newItem: WeatherNW.DataWeather
+        oldItem: Weather,
+        newItem: Weather
     ): Boolean = oldItem == newItem
 
     override fun areContentsTheSame(
-        oldItem: WeatherNW.DataWeather,
-        newItem: WeatherNW.DataWeather
+        oldItem: Weather,
+        newItem: Weather
     ): Boolean = oldItem == newItem
 }

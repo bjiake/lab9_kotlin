@@ -1,4 +1,4 @@
-package com.example.lab9_1
+package com.example.lab9_1.data.network
 
 
 import com.google.gson.annotations.SerializedName

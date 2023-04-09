@@ -1,9 +1,7 @@
-package com.example.lab9_1
+package com.example.lab9_1.data.network
 
 import com.example.lab9_1.Constants
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -22,10 +20,10 @@ interface WeatherAPI {
     }
 
     @GET("forecast")
-    fun getForecast(
+    suspend fun getForecast(
         @Query("q") city: String,
         @Query("appid") key: String,
         @Query("units") units: String,
         @Query("lang") language: String
-    ): Call<WeatherNW>
+    ): Response<WeatherNW>
 }
