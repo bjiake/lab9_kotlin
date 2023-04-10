@@ -39,8 +39,14 @@ class MainViewModel : ViewModel() {
                         it.toDomain()
                     }
                     _weatherList.postValue(weather)
+
                     weather?.forEach {
-                        App.dataBase.weatherDao().saveWeather(it.toEntity())
+                        val date = it.dtTxt.split(" ")[0]
+                        val count = App.dataBase.weatherDao().getWeatherCountByDate(date)
+
+                        if (count == 0) {
+                            App.dataBase.weatherDao().saveWeather(it.toEntity())
+                        }
                     }
                 }
                 else{
