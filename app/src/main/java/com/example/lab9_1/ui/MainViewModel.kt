@@ -27,35 +27,43 @@ class MainViewModel : ViewModel() {
 
     private fun loadWeather() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = App.api.getForecast(
-                Constants.API_CITY,
-                Constants.API_KEY,
-                Constants.API_UNITS,
-                Constants.API_LANG
-            )
             try {
-                if(response.isSuccessful){
+                val response = App.api.getForecast(
+                    Constants.API_CITY,
+                    Constants.API_KEY,
+                    Constants.API_UNITS,
+                    Constants.API_LANG
+                )
+                if (response.isSuccessful) {
                     val weather = response.body()?.list?.map {
                         it.toDomain()
                     }
                     _weatherList.postValue(weather)
+                    val cachedWeather = App.dataBase.weatherDao().getAllWeather()
 
                     weather?.forEach {
                         val date = it.dtTxt.split(" ")[0]
-                        val count = App.dataBase.weatherDao().getWeatherCountByDate(date)
 
-                        if (count == 0) {
+                        val isDatabaseContainsThisWeather =
+                            cachedWeather.any { it.dtTxt.split(" ")[0] == date }
+
+                        if (!isDatabaseContainsThisWeather) {
                             App.dataBase.weatherDao().saveWeather(it.toEntity())
                         }
                     }
-                }
-                else{
-                    _weatherList.postValue(listOf(App.dataBase.weatherDao().getAllWeather().toDomain()))
+                } else {
+                    //Если бд нет ничего не отображать
+                    _weatherList.postValue(
+                        App.dataBase.weatherDao().getAllWeather().map { it.toDomain() }
+                    )
                 }
             } catch (e: HttpException) {
+                _weatherList.postValue(emptyList())
                 Log.e("aaa", "Exception ${e.message}")
             } catch (e: Throwable) {
-                Log.d("ooops", "Something else went wrong: $e")
+                _weatherList.postValue(
+                    App.dataBase.weatherDao().getAllWeather().map { it.toDomain() }
+                )
             }
         }
     }
