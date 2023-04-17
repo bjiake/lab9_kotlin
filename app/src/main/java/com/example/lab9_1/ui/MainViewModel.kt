@@ -17,11 +17,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-class MainViewModel : ViewModel() {
+class MainViewModel(weatherAPI: WeatherAPI) : ViewModel() {
     private val _weatherList = MutableLiveData<List<Weather>>()
     val weatherList get() = _weatherList
+    private var _weatherAPI: WeatherAPI
 
     init {
+        _weatherAPI = weatherAPI
         loadWeather()
     }
 
