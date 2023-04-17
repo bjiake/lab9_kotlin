@@ -21,11 +21,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Timber.plant(Timber.DebugTree())
+
         recycleViewInit()
-        viewModelFactory = MainViewModelFactory(App.api, App.dataBase)
+
+        viewModelFactory = MainViewModelFactory(App.repository)
         viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.weatherList.observe(this) {
             weatherAdapter.submitList(it)
         }
