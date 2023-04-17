@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.lab9_1.App
+import com.example.lab9_1.MainViewModelFactory
 import com.example.lab9_1.WeatherAdapter
 import com.example.lab9_1.databinding.ActivityMainBinding
 import timber.log.Timber
@@ -13,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private val weatherAdapter = WeatherAdapter()
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private lateinit var viewModelFactory: MainViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Timber.plant(Timber.DebugTree())
         recycleViewInit()
-
+        viewModelFactory = MainViewModelFactory(App.api, App.dataBase)
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.weatherList.observe(this) {
             weatherAdapter.submitList(it)
