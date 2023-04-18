@@ -12,7 +12,4 @@ interface WeatherDao {
 
     //Селект каунт калл
     //Запросы sql statement ignore
-
-    @Query("SELECT COUNT(*) FROM WeatherEntity WHERE dtTxt = :date")
-    suspend fun getWeatherCountByDate(date: String): Int
 }

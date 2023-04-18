@@ -1,5 +1,6 @@
 package com.example.lab9_1
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,30 +15,37 @@ import java.lang.IllegalArgumentException
 //Todo
 private const val TYPE_COLD = 0
 private const val TYPE_WARM = 1
+//Построить CallBack на LongClick
+//В MainActivity устроить Share через Intent
 
-class WeatherAdapter: ListAdapter<Weather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
+class WeatherAdapter(
+    private val onLongClick:(weather: Weather) -> Unit
+): ListAdapter<Weather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             TYPE_COLD -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_weather_cold_holder, parent, false)
-                WeatherColdHolder(view)
+                WeatherColdHolder(view, onLongClick)
             }
             TYPE_WARM -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_weather_warm_holder, parent, false)
-                WeatherWarmHolder(view)
+                WeatherWarmHolder(view, onLongClick)
             }
             else ->{
                 throw IllegalArgumentException("Missing type of holder")
             }
         }
-        //
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            TYPE_COLD -> (holder as WeatherColdHolder).bind(getItem(position))
-            TYPE_WARM -> (holder as WeatherWarmHolder).bind(getItem(position))
+            TYPE_COLD -> {
+                (holder as WeatherColdHolder).bind(getItem(position))
+            }
+            TYPE_WARM -> {
+                (holder as WeatherWarmHolder).bind(getItem(position))
+            }
             else -> throw IllegalArgumentException("Invalid temperature")
         }
     }
@@ -54,7 +62,7 @@ class WeatherAdapter: ListAdapter<Weather, RecyclerView.ViewHolder>(WeatherDiffC
 private fun getImage(weather: Weather) =
     "https://openweathermap.org/img/wn/${weather.iconURL}@2x.png"
 
-class WeatherColdHolder(private val view: View) :
+class WeatherColdHolder(private val view: View, private val onLongClick: (weather: Weather) -> Unit) :
     RecyclerView.ViewHolder(view.rootView) {
     fun bind(weather: Weather) {
         val weatherTimeDate = weather.dtTxt.split(" ")
@@ -67,10 +75,17 @@ class WeatherColdHolder(private val view: View) :
             .with(view.rootView)
             .load(getImage(weather))
             .into(view.findViewById(R.id.ivIcon))
+
+        view.setOnLongClickListener {
+            Log.d("aaa", "ColdLongClick")
+
+            onLongClick(weather)
+            true
+        }
     }
 }
 
-class WeatherWarmHolder(private val view: View) :
+class WeatherWarmHolder(private val view: View, private val onLongClick: (weather: Weather) -> Unit) :
     RecyclerView.ViewHolder(view.rootView) {
     fun bind(weather: Weather) {
         val weatherTimeDate = weather.dtTxt.split(" ")
@@ -83,6 +98,13 @@ class WeatherWarmHolder(private val view: View) :
             .with(view.rootView)
             .load(getImage(weather))
             .into(view.findViewById(R.id.ivIcon))
+
+        view.setOnClickListener {
+            Log.d("aaa", "WarmLongClick")
+
+            onLongClick(weather)
+            true
+        }
     }
 }
 
