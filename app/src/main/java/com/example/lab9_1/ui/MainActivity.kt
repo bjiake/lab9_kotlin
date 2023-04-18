@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lab9_1.*
 import com.example.lab9_1.databinding.ActivityMainBinding
+import com.example.lab9_1.domain.Weather
 import timber.log.Timber
 
 
@@ -15,16 +16,8 @@ class MainActivity : AppCompatActivity() {
     private val weatherAdapter = WeatherAdapter(
         onLongClick = {
             Log.d("aaa", "$it")
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                val weatherTimeDate = it.dtTxt.split(" ")
-                putExtra(Intent.EXTRA_TEXT, "${Constants.API_CITY}, ${it.temperature}℃, ${weatherTimeDate.last()}")
-                type = "text/plain"
+            shareWeather(it)
             }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        }
     )
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -51,5 +44,17 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager.VERTICAL,
             false
         )
+    }
+
+    private fun shareWeather(weather: Weather){
+        val sendIntent = Intent().apply {
+            val weatherTimeDate = weather.dtTxt.split(" ")
+
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "${Constants.API_CITY} ${weather.dtTxt} ${weather.temperature}")
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Send text")
+        startActivity(shareIntent)
     }
 }
