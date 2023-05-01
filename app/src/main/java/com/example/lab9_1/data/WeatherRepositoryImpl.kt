@@ -5,15 +5,20 @@ import com.example.lab9_1.Constants
 import com.example.lab9_1.data.local.WeatherDataBase
 import com.example.lab9_1.data.network.WeatherAPI
 import com.example.lab9_1.domain.Weather
+import com.example.lab9_1.domain.WeatherData
 import com.example.lab9_1.domain.WeatherRepository
-import com.google.android.material.snackbar.Snackbar
-
+import kotlin.properties.Delegates
+sealed interface WhereGetWeatherData {
+    data class FromNetWork(val weather: WeatherData) : WhereGetWeatherData
+    data class FromDataBase(val weather: WeatherData): WhereGetWeatherData
+}
 
 class WeatherRepositoryImpl(
     private val dataBase: WeatherDataBase,
     private val weatherAPI: WeatherAPI
 ) : WeatherRepository {
-    override suspend fun loadWeather(): List<Weather> {
+
+    override suspend fun loadWeather(): WhereGetWeatherData {
         try {
             val response = weatherAPI.getForecast(
                 Constants.API_CITY,
@@ -38,14 +43,15 @@ class WeatherRepositoryImpl(
                     dataBase.weatherDao().saveWeather(it.toEntity())
                 }
             }
-            return weather.orEmpty()
-
+            return WhereGetWeatherData.FromNetWork(WeatherData(weather.orEmpty()))
+//            return weather.orEmpty()
         } catch (e: java.lang.Exception) {
             Log.e("aaa", "Exception ${e.message}")
             val weather = dataBase.weatherDao().getAllWeather().map { it.toDomain() }
             //SnackBar один раз показался
             //sealed класс внутри 2 дата класса с инета или бд
-            return weather
+            return WhereGetWeatherData.FromDataBase(WeatherData(weather))
+//            return weather
         }
     }
 }

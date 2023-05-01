@@ -1,6 +1,7 @@
 package com.example.lab9_1.domain
 
-interface WeatherRepository {
+import com.example.lab9_1.data.WhereGetWeatherData
 
-    suspend fun loadWeather(): List<Weather>
+interface WeatherRepository {
+    suspend fun loadWeather(): WhereGetWeatherData
 }

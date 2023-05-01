@@ -3,12 +3,14 @@ package com.example.lab9_1.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lab9_1.*
 import com.example.lab9_1.databinding.ActivityMainBinding
 import com.example.lab9_1.domain.Weather
+import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
 
 
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         onLongClick = {
             Log.d("aaa", "$it")
             shareWeather(it)
-            }
+        }
     )
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -35,6 +37,16 @@ class MainActivity : AppCompatActivity() {
         viewModel.weatherList.observe(this) {
             weatherAdapter.submitList(it)
         }
+        showSnackBar(binding.root)
+    }
+
+    private fun showSnackBar(view: View) {
+        viewModel.isFromDataBase.observe(this) {
+            it.getContentIfNotHandled()?.let {
+                val mySnackbar = Snackbar.make(view, "Данные загружены из БД", Snackbar.LENGTH_LONG)
+                mySnackbar.show()
+            }
+        }
     }
 
     private fun recycleViewInit() {
@@ -46,12 +58,15 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun shareWeather(weather: Weather){
+    private fun shareWeather(weather: Weather) {
         val sendIntent = Intent().apply {
             val weatherTimeDate = weather.dtTxt.split(" ")
 
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "${Constants.API_CITY} ${weather.dtTxt} ${weather.temperature}")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "${Constants.API_CITY} ${weather.dtTxt} ${weather.temperature}"
+            )
             type = "text/plain"
         }
         val shareIntent = Intent.createChooser(sendIntent, "Send text")
