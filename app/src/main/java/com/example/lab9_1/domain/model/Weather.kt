@@ -1,4 +1,4 @@
-package com.example.lab9_1.domain
+package com.example.lab9_1.domain.model
 
 data class Weather(
     val temperature: Double,

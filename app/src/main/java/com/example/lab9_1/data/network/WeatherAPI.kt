@@ -1,6 +1,8 @@
 package com.example.lab9_1.data.network
 
 import com.example.lab9_1.Constants
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,9 +13,12 @@ import retrofit2.http.Query
 interface WeatherAPI {
     companion object {
         fun createAPI(): WeatherAPI {
+            val interceptorBody = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(interceptorBody).build()
             val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build()
             return retrofitBuilder.create(WeatherAPI::class.java)
         }
@@ -21,9 +26,10 @@ interface WeatherAPI {
 
     @GET("forecast")
     suspend fun getForecast(
-        @Query("q") city: String,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("appid") key: String,
         @Query("units") units: String,
         @Query("lang") language: String
-    ): Response<WeatherNW>
+    ): WeatherNW
 }

@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.lab9_1.data.network.WeatherNW
-import com.example.lab9_1.domain.Weather
+import com.example.lab9_1.domain.model.Weather
+import com.example.lab9_1.ui.Model.WeatherUI
 import java.lang.IllegalArgumentException
 //Todo
 private const val TYPE_COLD = 0
@@ -19,8 +19,8 @@ private const val TYPE_WARM = 1
 //В MainActivity устроить Share через Intent
 
 class WeatherAdapter(
-    private val onLongClick:(weather: Weather) -> Unit
-): ListAdapter<Weather, RecyclerView.ViewHolder>(WeatherDiffCallback()){
+    private val onLongClick:(WeatherUI) -> Unit
+): ListAdapter<WeatherUI, RecyclerView.ViewHolder>(WeatherDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -51,7 +51,7 @@ class WeatherAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).temperature > -15) {
+        return if (getItem(position).temp > -2) {
             TYPE_WARM
         } else {
             TYPE_COLD
@@ -59,15 +59,15 @@ class WeatherAdapter(
     }
 }
 
-private fun getImage(weather: Weather) =
-    "https://openweathermap.org/img/wn/${weather.iconURL}@2x.png"
+private fun getImage(weather: WeatherUI) =
+    "https://openweathermap.org/img/wn/${weather.icon}@2x.png"
 
-class WeatherColdHolder(private val view: View, private val onLongClick: (weather: Weather) -> Unit) :
+class WeatherColdHolder(private val view: View, private val onLongClick: (weather: WeatherUI) -> Unit) :
     RecyclerView.ViewHolder(view.rootView) {
-    fun bind(weather: Weather) {
+    fun bind(weather: WeatherUI) {
         val weatherTimeDate = weather.dtTxt.split(" ")
         view.findViewById<TextView>(R.id.tvTemperature).text =
-            view.rootView.context.getString(R.string.temperature, weather.temperature.toString())
+            view.rootView.context.getString(R.string.temperature, weather.temp.toString())
         view.findViewById<TextView>(R.id.tvTime).text = weatherTimeDate.first()
         view.findViewById<TextView>(R.id.tvDate).text = weatherTimeDate.last()
         view.findViewById<TextView>(R.id.tvPressure).text = weather.pressure.toString()
@@ -85,12 +85,12 @@ class WeatherColdHolder(private val view: View, private val onLongClick: (weathe
     }
 }
 
-class WeatherWarmHolder(private val view: View, private val onLongClick: (weather: Weather) -> Unit) :
+class WeatherWarmHolder(private val view: View, private val onLongClick: (weather: WeatherUI) -> Unit) :
     RecyclerView.ViewHolder(view.rootView) {
-    fun bind(weather: Weather) {
+    fun bind(weather: WeatherUI) {
         val weatherTimeDate = weather.dtTxt.split(" ")
         view.findViewById<TextView>(R.id.tvTemperature).text =
-            view.rootView.context.getString(R.string.temperature, weather.temperature.toString())
+            view.rootView.context.getString(R.string.temperature, weather.temp.toString())
         view.findViewById<TextView>(R.id.tvTime).text = weatherTimeDate.first()
         view.findViewById<TextView>(R.id.tvDate).text = weatherTimeDate.last()
         view.findViewById<TextView>(R.id.tvPressure).text = weather.pressure.toString()
@@ -108,14 +108,14 @@ class WeatherWarmHolder(private val view: View, private val onLongClick: (weathe
     }
 }
 
-class WeatherDiffCallback : DiffUtil.ItemCallback<Weather>() {
+class WeatherDiffCallback : DiffUtil.ItemCallback<WeatherUI>() {
     override fun areItemsTheSame(
-        oldItem: Weather,
-        newItem: Weather
+        oldItem: WeatherUI,
+        newItem: WeatherUI
     ): Boolean = oldItem == newItem
 
     override fun areContentsTheSame(
-        oldItem: Weather,
-        newItem: Weather
+        oldItem: WeatherUI,
+        newItem: WeatherUI
     ): Boolean = oldItem == newItem
 }
